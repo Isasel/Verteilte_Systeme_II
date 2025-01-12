@@ -9,7 +9,6 @@ function updateLocation() {
   
     //falls eines der Felder leer --> findLocation um aktuelle Position zu bestimmen 
     if (!latitudeField.value || !longitudeField.value) {
-        console.log("Case 1");
         LocationHelper.findLocation((helper) => {
             const latitude = helper.latitude;
             const longitude = helper.longitude;
@@ -27,21 +26,15 @@ function updateLocation() {
             }
     
             //ein neues Map-Manager-Objekt erstellt, mit abgerufenen Koordinaten initialisiert 
-            let mapManager = new MapManager();
             mapManager.initMap(latitude, longitude);
             mapManager.updateMarkers(latitude, longitude);
       });
     //Koordinaten bereits vorhanden --> initialisiere mit diesen werten 
     } else {
-        console.log("Case 2");
 
       const latitude = latitudeField.value;
       const longitude = longitudeField.value;
   
-      console.log(latitude);
-      console.log(longitude);
-  
-      let mapManager = new MapManager();
       mapManager.initMap(latitude, longitude);
   
       const map = document.getElementById("map");
@@ -68,13 +61,16 @@ function updateLocation() {
     }
   }
 
+  let mapManager;
 
     
 // Event-Listener nach Laden der Seite registrieren
 document.addEventListener("DOMContentLoaded", () => {
-  updateLocation();
-
-  const taggingForm = document.getElementById("tagging-form");
+    mapManager = new MapManager();
+    updateLocation();
+    
+  
+  const taggingForm = document.getElementById("tag-form");
   const discoveryForm = document.getElementById("discovery-form");
 
   if (taggingForm) {
@@ -90,43 +86,30 @@ document.addEventListener("DOMContentLoaded", () => {
 async function handleTagging(event) {
   event.preventDefault(); // Standardverhalten verhindern
 
-  const name = document.getElementById("name").value;
-  const latitude = document.getElementById("latitude").value;
-  const longitude = document.getElementById("longitude").value;
-  const tag = document.getElementById("tag").value;
+  const name = document.getElementById("Add_Name").value;
+const latitude = document.getElementById("Add_Latitude").value;
+const longitude = document.getElementById("Add_Longitude").value;
+const tag = document.getElementById("Add_Hashtag").value;
 
-  if (!name || !latitude || !longitude || !tag) {
-      alert("Bitte alle Felder ausfüllen.");
-      return;
-  }
+  const geoTag = { name:name, latitude: parseFloat(latitude), longitude: parseFloat(longitude), tag: tag };
 
-  const geoTag = { name, latitude: parseFloat(latitude), longitude: parseFloat(longitude), tag };
-
-  try {
-      const response = await fetch("/api/geotags", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(geoTag),
-      });
-
-      if (response.ok) {
-          alert("GeoTag erfolgreich hinzugefügt!");
-          updateLocation(); // Aktualisiere die Karte und Liste
-      } else {
-          console.error("Fehler beim Hinzufügen des GeoTags:", response.statusText);
-      }
-  } catch (error) {
-      console.error("Fehler beim Server-Aufruf:", error);
-  }
+  fetch("/api/geotags", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(geoTag),
+  })
+    .then((response) => response.json())
+    .then((data) => console.log("Erfolg:", data))
+    .catch((error) => console.error("Fehler:", error));
 }
 
 // Verarbeitung des Discovery-Formulars
 async function handleDiscovery(event) {
   event.preventDefault(); // Standardverhalten verhindern
 
-  const latitude = document.getElementById("latitude").value;
-  const longitude = document.getElementById("longitude").value;
-  const searchterm = document.getElementById("searchterm").value;
+  const latitude = document.getElementById("Search_Latitude").value;
+  const longitude = document.getElementById("Search_Longitude").value;
+  const searchterm = document.getElementById("Search_Key").value;
 
   const params = new URLSearchParams({
       latitude: latitude,
@@ -135,13 +118,18 @@ async function handleDiscovery(event) {
   });
 
   try {
-      const response = await fetch(`/api/geotags?${params.toString()}`, {
+      const response = await fetch(`/api/geotags`, {
           method: "GET",
       });
 
       if (response.ok) {
           const results = await response.json();
-          updateDisplay(results); // Aktualisiere die Anzeige mit den Suchergebnissen
+          if (response.ok) {
+            const jsonResponse = await response.json();
+            const results = jsonResponse.geotags; // Extrahiere GeoTags aus der Antwort
+            console.log(results);
+            updateDisplay(results); // Aktualisiere die Anzeige mit den Suchergebnissen
+          }
       } else {
           console.error("Fehler bei der Suche:", response.statusText);
       }
@@ -160,7 +148,6 @@ function updateDisplay(results = []) {
       .join("");
 
   // Aktualisiere die Marker auf der Karte
-  let mapManager = new MapManager();
   mapManager.updateMarkers(
       results[0]?.latitude || 0,
       results[0]?.longitude || 0,

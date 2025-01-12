@@ -68,7 +68,6 @@ function updateLocation() {
   
     //falls eines der Felder leer --> findLocation um aktuelle Position zu bestimmen 
     if (!latitudeField.value || !longitudeField.value) {
-        console.log("Case 1");
       LocationHelper.findLocation((helper) => {
             const latitude = helper.latitude;
             const longitude = helper.longitude;
@@ -92,7 +91,6 @@ function updateLocation() {
       });
     //Koordinaten bereits vorhanden --> initialisiere mit diesen werten 
     } else {
-        console.log("Case 2");
 
       const latitude = latitudeField.value;
       const longitude = longitudeField.value;

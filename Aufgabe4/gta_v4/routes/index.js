@@ -23,18 +23,23 @@ router.get("/api/geotags", (req, res) => {
   let results;
 
 
-  if (search) {
+  if (searchterm) {
     results = geoTagStore.searchNearbyGeoTags(
-      latitude, longitude ,
+      parseFloat(latitude),
+      parseFloat(longitude),
       radius,
       searchterm
     );
 
   } else {
-    results = geoTagStore.getNearbyGeoTags(latitude, longitude , radius);
+    results = geoTagStore.getNearbyGeoTags(
+      parseFloat(latitude),
+      parseFloat(longitude),
+      radius
+    );
   }
   let jsonResult = {
-    geotags: finalResults,};
+    geotags: results,};
   res.status(200).json(jsonResult);
 });
 //Überprüft
@@ -134,7 +139,7 @@ router.post("/discovery", (req, res) => {
     results = geoTagStore.searchNearbyGeoTags(
       latitude, longitude ,
       radius,
-      search
+      searchterm
     );
 
   } else {
