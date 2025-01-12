@@ -1,63 +1,4 @@
-// File origin: VS1LAB A2
 
-/* eslint-disable no-unused-vars */
-
-// This script is executed when the browser loads index.html.
-
-// "console.log" writes to the browser's console. 
-// The console window must be opened explicitly in the browser.
-// Try to find this output in the browser...
-console.log("The geoTagging script is going to start...");
-
-/**
- * TODO: 'updateLocation'
- * A function to retrieve the current location and update the page.
- * It is called once the page has been fully loaded.
- */
-// ... your code here ...
-
-/*
-Lesen sie dort die geeigneten Formularfelder im DOM aus und testen sie, ob schon Koordinaten 
-eingetragen sind. Rufen sie die Methode LocationHelper.findLocation() nur noch dann auf, wenn es die Situation erfordert.
-*/
-/*
-const mapElement = document.getElementById("map");
-const taglistJSON = mapElement.dataset.tags;
-const taglist = JSON.parse(taglistJSON); // JavaScript-Array
-
-function updateLocation(){
-
-    LocationHelper.findLocation(function(helper){
-        var lat = document.getElementsByClassName("Latitude");
-        lat[0].value =  helper.latitude;
-        lat[1].value =  helper.latitude;
-
-        var lon = document.getElementsByClassName("Longitude");
-        lon[0].value =  helper.longitude;
-        lon[1].value =  helper.longitude;
-
-        var elements = document.getElementsByClassName("PHolder");
-        var element2 = Array.from(elements);
-        for (let elem of element2) { 
-            elem.remove();
-        } 
-
-        let mapManager = new MapManager(); 
-        mapManager.initMap(helper.latitude, helper.longitude, 20); 
-        mapManager.updateMarkers(helper.latitude, helper.longitude);
-
-        const map = document.getElementById("map");
-        const taglistString = map.getAttribute("data-tags");
-
-        const tagList = JSON.parse(taglistString);
-
-        for (const tag of tagList) {
-        tag.location = { latitude: tag.latitude, longitude: tag.longitude };
-        }
-        });
-        mapManager.updateMarkers(latitude, longitude, tagList);
-    
-}*/
 
 function updateLocation() {
     var lat = document.getElementsByClassName("Latitude");
@@ -129,7 +70,100 @@ function updateLocation() {
 
 
     
-// Wait for the page to fully load its DOM content, then call updateLocation
+// Event-Listener nach Laden der Seite registrieren
 document.addEventListener("DOMContentLoaded", () => {
-    updateLocation();
+  updateLocation();
+
+  const taggingForm = document.getElementById("tagging-form");
+  const discoveryForm = document.getElementById("discovery-form");
+
+  if (taggingForm) {
+      taggingForm.addEventListener("submit", handleTagging);
+  }
+
+  if (discoveryForm) {
+      discoveryForm.addEventListener("submit", handleDiscovery);
+  }
 });
+
+// Verarbeitung des Tagging-Formulars
+async function handleTagging(event) {
+  event.preventDefault(); // Standardverhalten verhindern
+
+  const name = document.getElementById("name").value;
+  const latitude = document.getElementById("latitude").value;
+  const longitude = document.getElementById("longitude").value;
+  const tag = document.getElementById("tag").value;
+
+  if (!name || !latitude || !longitude || !tag) {
+      alert("Bitte alle Felder ausfüllen.");
+      return;
+  }
+
+  const geoTag = { name, latitude: parseFloat(latitude), longitude: parseFloat(longitude), tag };
+
+  try {
+      const response = await fetch("/api/geotags", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(geoTag),
+      });
+
+      if (response.ok) {
+          alert("GeoTag erfolgreich hinzugefügt!");
+          updateLocation(); // Aktualisiere die Karte und Liste
+      } else {
+          console.error("Fehler beim Hinzufügen des GeoTags:", response.statusText);
+      }
+  } catch (error) {
+      console.error("Fehler beim Server-Aufruf:", error);
+  }
+}
+
+// Verarbeitung des Discovery-Formulars
+async function handleDiscovery(event) {
+  event.preventDefault(); // Standardverhalten verhindern
+
+  const latitude = document.getElementById("latitude").value;
+  const longitude = document.getElementById("longitude").value;
+  const searchterm = document.getElementById("searchterm").value;
+
+  const params = new URLSearchParams({
+      latitude: latitude,
+      longitude: longitude,
+      searchterm: searchterm,
+  });
+
+  try {
+      const response = await fetch(`/api/geotags?${params.toString()}`, {
+          method: "GET",
+      });
+
+      if (response.ok) {
+          const results = await response.json();
+          updateDisplay(results); // Aktualisiere die Anzeige mit den Suchergebnissen
+      } else {
+          console.error("Fehler bei der Suche:", response.statusText);
+      }
+  } catch (error) {
+      console.error("Fehler beim Server-Aufruf:", error);
+  }
+}
+
+// Aktualisiere die Ergebnisanzeige und Karte
+function updateDisplay(results = []) {
+  const resultList = document.getElementById("results-list");
+
+  // Aktualisiere die Ergebnisliste
+  resultList.innerHTML = results
+      .map((result) => `<li>${result.name} (${result.latitude}, ${result.longitude})</li>`)
+      .join("");
+
+  // Aktualisiere die Marker auf der Karte
+  let mapManager = new MapManager();
+  mapManager.updateMarkers(
+      results[0]?.latitude || 0,
+      results[0]?.longitude || 0,
+      results
+  );
+}

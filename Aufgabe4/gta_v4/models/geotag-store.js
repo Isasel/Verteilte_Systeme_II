@@ -49,9 +49,14 @@ class InMemoryGeoTagStore{
         return false;
       }
 
-      getGeoTagById(id) {
+    getGeoTagById(id) {
         return this.geoTags.find((tag) => tag.id === parseInt(id));
-      }
+    }
+
+    // Alle GeoTags abrufen
+    getAllGeoTags() {
+      return this.geoTags;
+    }
 
     // returns all geotags in the proximity of a location (within certain radius)
     getNearbyGeoTags(latitude, longitude, radius) {

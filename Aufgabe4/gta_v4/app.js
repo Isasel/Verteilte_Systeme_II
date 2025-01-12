@@ -1,14 +1,4 @@
-// File origin: VS1LAB A3
 
-/**
- * This script configures the main express app of the GeoTag server.
- * It's a template for exercise VS1lab/Aufgabe3
- * Complete all TODOs in the code documentation.
- */
-
-/**
- * Define module dependencies.
- */
 
 const createError = require("http-errors");
 const express = require("express");
@@ -17,14 +7,12 @@ const logger = require("morgan");
 
 const indexRouter = require("./routes/index");
 
+
 /**
  * Set up Express app.
  */
 
 const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
 
 // Set ejs as the view engine.
 app.set("views", path.join(__dirname, "views"));
@@ -39,18 +27,11 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-/**
- * VS1LAB:
- * Configure path for static content.
- * Test the result in a browser here: 'http://localhost:3000/'.
- */
-
-// TODO: ... your code here ...
 //statische Dateien bereitstellen
 app.use(express.static(path.join(__dirname, "public")));
 
 // Set dedicated script for routing
-app.use("/", indexRouter);
+app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
