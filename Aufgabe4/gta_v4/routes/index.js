@@ -10,9 +10,6 @@
  * Define module dependencies.
  */
 
-
-
-
 const express = require("express");
 const router = express.Router();
 
@@ -38,6 +35,136 @@ const geoTagStore = new GeoTagStore();
 const GeoTagExamples = require("../models/geotag-examples");
 const geoTagExamples = new GeoTagExamples(geoTagStore);
 
+/////
+
+router.post("/api/geotags", (req, res) => {
+  const { name, latitude, longitude, tag } = req.body;
+
+  geoTagStore.addGeoTag(new GeoTag(name, latitude, longitude, tag));
+
+  res.status(201)
+  .location(`/api/geotags/${newGeoTag.id}`)
+  .json({ message: "GeoTag created successfully", geotag: newGeoTag });
+});
+
+router.get("/api/geotags", (req, res) => {
+  const { latitude, longitude, radius, searchterm } = req.query;
+
+  let results;
+  if (latitude && longitude && radius) {
+    // Suche nach GeoTags in der Nähe
+    results = searchterm
+      ? geoTagStore.searchNearbyGeoTags(latitude, longitude, radius, searchterm)
+      : geoTagStore.getNearbyGeoTags(latitude, longitude, radius);
+  } else {
+    // Alle GeoTags zurückgeben
+    results = geoTagStore.getAllGeoTags();
+  }
+
+  res.status(200).json(results);
+});
+
+router.get("/api/geotags/:id", (req, res) => {
+  const geoTag = geoTagStore.getGeoTagById(req.params.id);
+  if (geoTag) {
+    res.status(200).json(geoTag);
+  } else {
+    res.status(404).json({ message: "GeoTag not found" });
+  }
+});
+
+
+router.put("/api/geotags/:id", (req, res) => {
+  const { name, latitude, longitude, tag } = req.body;
+  const updatedGeoTag = geoTagStore.updateGeoTag(req.params.id, { name, latitude, longitude, tag });
+
+  if (updatedGeoTag) {
+    res.status(200).json({ message: "GeoTag updated successfully", geotag: updatedGeoTag });
+  } else {
+    res.status(404).json({ message: "GeoTag not found" });
+  }
+});
+
+
+router.delete("/api/geotags/:id", (req, res) => {
+  const success = geoTagStore.deleteGeoTag(req.params.id);
+  if (success) {
+    res.status(204).end();
+  } else {
+    res.status(404).json({ message: "GeoTag not found" });
+  }
+});
+
+/////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Route '/' for HTTP 'GET' requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -51,6 +178,11 @@ const geoTagExamples = new GeoTagExamples(geoTagStore);
 // router.get("/", (req, res) => {
 //   res.render("index", { taglist: [] });
 // });
+
+
+
+
+
 router.get("/", (req, res) => {
   res.render("index", {
     taglist: [],
@@ -59,6 +191,9 @@ router.get("/", (req, res) => {
     markers: null,
   });
 });
+ 
+
+
 
 /**
  * Route '/tagging' for HTTP 'POST' requests.
@@ -76,7 +211,7 @@ router.get("/", (req, res) => {
  */
 
 // TODO: ... your code here ...
-
+ 
 router.post("/tagging", (req, res) => {
   const name = req.body.name;
   const latitude = req.body.latitude;
@@ -104,6 +239,8 @@ router.post("/tagging", (req, res) => {
 
 });
 
+
+
 /**
  * Route '/discovery' for HTTP 'POST' requests.
  * (http://expressjs.com/de/4x/api.html#app.post.method)
@@ -121,6 +258,8 @@ router.post("/tagging", (req, res) => {
  */
 
 // TODO: ... your code here ...
+
+
 router.post("/discovery", (req, res) => {
   const latitude = req.body.latitude;
   const longitude = req.body.longitude;
@@ -150,5 +289,7 @@ router.post("/discovery", (req, res) => {
     markers: JSON.stringify(results),
   });
 });
+
+
 
 module.exports = router;

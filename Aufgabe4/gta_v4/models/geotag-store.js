@@ -27,17 +27,31 @@ class InMemoryGeoTagStore{
     constructor() {
         //Array zum Speichern aller Geotags
         this.geoTags = [];
+        this.nextID = 1;
     }
 
-    //add a geotag to the store
-    addGeoTag(geoTag) {
+    addGeoTag(geoTag,id) {
+        geoTag.id = this.nextId++;
         this.geoTags.push(geoTag);
+        return geoTag;
     }
 
-    //delete geo-tags from the store by name
     removeGeoTag(name) {
         this.geoTags = this.geoTags.filter(tag => tag.name !== name);
     }
+
+    deleteGeoTag(id) {
+        const index = this.geoTags.findIndex((tag) => tag.id === parseInt(id));
+        if (index !== -1) {
+          this.geoTags.splice(index, 1);
+          return true;
+        }
+        return false;
+      }
+
+      getGeoTagById(id) {
+        return this.geoTags.find((tag) => tag.id === parseInt(id));
+      }
 
     // returns all geotags in the proximity of a location (within certain radius)
     getNearbyGeoTags(latitude, longitude, radius) {
