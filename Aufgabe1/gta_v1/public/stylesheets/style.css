@@ -1,0 +1,318 @@
+/*
+  File origin: VS1LAB A1b  
+
+  CSS style is BEM. Classes used for CSS, IDs for JavaScript querying (future use).
+  CSS variables used for clarity and themability (e.g. through SSR). 
+  Inherited box sizing used for ease of including 3rd party content-box components.
+*/
+
+/* Global styling , define font*/
+@font-face { font-family: 'HarryP'; src: url('HARRYP__.TTF') format('truetype');} /*custom font for Harry Potter theme */
+
+
+
+html {
+  box-sizing: border-box; /*include elements padding and border in total width/heighth*/
+}
+
+
+
+
+
+/* Variables, define css properties */
+:root {
+  --link-color: #00B7FF;
+  --background-color: #efefef;
+  --border-color: #cdcdcd;
+  --gray-color: #666;
+
+  --royal-blue-color:rgb(28, 37, 125);
+}
+
+
+/* HTML element styles */
+body {
+  margin: 0;
+  padding: 0;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /*set minimum height to 100% of the view port height --> ensures that body takes up full height of browser window */
+}
+
+
+.row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /**/
+  flex: 1;
+  gap:10px;
+  flex-wrap: wrap; /* Ermöglicht Umbruch bei Platzmangel */
+  padding-bottom: 10px;
+  overflow: hidden;
+  box-sizing: border-box; 
+}
+
+.col-1 {
+  width: calc(8.33% - 1rem);
+  padding-left: 10px;
+}
+
+.col-2 {
+  width: calc(16.66% - 1rem);
+}
+
+.col-3 {
+  width: calc(25% - 1rem);
+}
+
+.col-4 {
+  width: calc(33.33% - 1rem);
+}
+
+.col-5 {
+  width: calc(41.66% - 1rem);
+}
+
+.col-6 {
+  width: calc(50% - 1rem);
+}
+
+.col-7 {
+  width: calc(58.33% - 1rem);
+}
+
+.col-8 {
+  width: calc(66.66% - 1rem);
+}
+
+.col-9 {
+  width: calc(75% - 1rem);
+  padding-right: 10px;
+}
+
+.col-10 {
+  width: calc(83.33% - 1rem);
+}
+
+.col-11 {
+  width: calc(91.66% - 1rem);
+}
+
+.col-12 {
+  width: calc(100% - 1rem);
+}
+
+header{
+  
+  color: gold; 
+  font-family: 'HarryP', sans-serif;
+  height: 30%;
+  width: 100%;
+  background-color: var(--royal-blue-color);
+  margin: 0;
+  padding: 0;
+  display:flex; /*Anordnung*/ 
+  align-items: center;/*vertikale Positionierung*/
+}
+
+/*icon*/
+header img{
+  padding: 20px;
+  height: 50px;
+}
+
+/*about, help, home*/
+header nav{
+  font-size: 20px;
+  margin-left: auto;
+  padding-right: 3%; 
+}
+
+/*Link aussehen angepasst*/
+header nav a{
+  color: inherit;
+  text-decoration: none;
+}
+
+
+footer{
+  background-color: var(--royal-blue-color);
+  color: gold;
+  padding-left: 20px; 
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+
+main{
+  
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: 'HarryP', sans-serif;
+  
+  /*display: grid; /*divide into grid*/
+  /*grid-template-columns: 1fr 2fr; /* Tagging 1/3, Discovery + Map 2/3 */
+  gap: 20px; 
+}
+
+/*add new geo tag, search*/
+legend{
+  font-size: 25px;
+  font-weight: 700; /*t*/
+  margin-bottom:20px;
+}
+
+/*Umrandung*/
+fieldset{
+    border-style:groove;
+    border-color:var(--royal-blue-color);
+    border-width: 2px; 
+    border-radius: 5px; /*rounded corners*/
+}
+
+/*Überschriften --> Tagging, Discovery*/
+h2{
+  font-weight: 600;
+  font-size: 30px;
+}
+
+/*einheitliche Größe der labels*/
+label{
+  font-size: 20px;
+}
+
+
+/*eingaben zu search*/
+.main__tagging form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Abstand zwischen den Feldern */
+}
+
+
+input[type="text"],
+input[type="submit"] {
+  width: 100%; 
+  padding: 8px; 
+  box-sizing: border-box;
+  margin-bottom: 20px; 
+  margin-top: 10px;
+}
+
+/*anordnung der zwei ergebnisse und der karte*/
+.discovery__wrapper {
+  display: flex;
+  width: auto;
+  flex-direction: row;
+  
+}
+
+/* Map styling */
+.discovery__map {
+  
+  margin-top: 15px;
+}
+
+/*suchergebnisse*/
+.discovery__wrapper li{
+  list-style: none;
+  margin-bottom: 10px;
+  background-color:rgb(196, 201, 241) ;
+  border-color:var(--royal-blue-color);
+  border-style: groove;
+  border-width: 2px;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 19px;
+}
+
+/*Einrückung der Liste auflösen*/
+.discovery__wrapper ul{
+  margin-left:-40px;
+}
+
+/*mapView id*/
+.discovery__map img, 
+#mapView {
+  width: 100%;        /* Maximale Breite innerhalb des Containers */
+  height: auto;       /* Höhe automatisch skalieren, um das Seitenverhältnis zu erhalten */
+  object-fit: cover;  /* Passt die Karte an, ohne das Seitenverhältnis zu ändern */
+}
+
+/*alles untereinander sortiert*/
+.discovery__search label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+
+.main__discovery input[type="text"],
+.main__discovery input[type="submit"] {
+  width: 50%; /* Volle Breite für Eingabefelder */
+}
+
+.grid-container,
+.main,
+.main__discovery,
+.main__tagging {
+  max-width: 100%; 
+  overflow: hidden; 
+}
+
+
+  
+/*if width<768px apply style*/
+@media (max-width: 768px) {
+  /*class selector, apply style to any element with the class main*/
+  .main {
+    display: flex; /*type of box used*/
+    flex-direction: column;  /*alter items width accordingly*/
+  }
+
+  header 
+  {
+    display:flex; /*Anordnung*/ 
+    flex-direction: column;
+    align-items: center;
+    font-size: auto;
+  }
+
+  header nav
+  {
+    margin-left: none;
+    padding-right: none; 
+    padding: 10px ;
+  }
+
+  /*all three classes --> 100% width*/
+    .col-1,
+    .col-2,
+    .col-3,
+    .col-4,
+    .col-5,
+    .col-6,
+    .col-7,
+    .col-8,
+    .col-9,
+    .col-10,
+    .col-11,
+    .col-12 {
+      width: calc(100% - 1rem);
+    }
+  
+  .main {
+    width: 100%;
+  }
+
+  .row {
+    width: 100%;
+    display: flex;
+    gap:10px;
+    padding: 10px;
+  }
+
+  
+}

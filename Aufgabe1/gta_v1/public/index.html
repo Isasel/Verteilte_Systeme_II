@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+
+<!-- File origin: VS1LAB A1a -->
+
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoTagApp</title>
+    <link rel="stylesheet" href="./stylesheets/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <header class="header">
+        <img src="./images/location.png" class="header__image" alt="an image of a map and location">
+        <h1 class="header__title">GeoPotterTagApp</h1>
+        <nav class="header__navigation">
+            <a href="#">About</a> | <a href="#">Help</a> | <a href="/">Home</a>
+        </nav>
+    </header>
+
+        
+    <main class="main row">
+        <section class="main__tagging tagging col-4">
+            <h2>Tagging</h2>
+
+            <!-- ############### VS1Lab 1a Form 1 Start -->
+            
+            <form id="tag-form" action="/tagging" method="post">
+                <fieldset>
+                <legend>Add a new Geotag</legend>
+            
+                    <label >Latitude:
+                        <input type="text"  id="Add_Latitude" placeholder="49.01379" readonly="true"></label>
+                    
+                    <label>Longitude:
+                        <input type="text" id="Add_Longitude" placeholder="8.390071" readonly="true"></label>
+                    
+                    <label >Name:
+                        <input type="text" pattern="[A-Za-z]*" id="Add_Name" placeholder="Hogwarts-E" required maxlength="10"></label>
+                    
+                    <label >Hashtag:
+                        <input type="text" pattern="#[A-Za-z]*" id="Add_Hashtag" placeholder="#HarryPotte" maxlength="11"></label>
+                        
+                    <input id="Submit_Add" type="submit" value="Add Tag">
+                </fieldset>
+
+
+            </form>
+        
+            <!-- ############### VS1Lab 1a Form 1 End -->
+
+        </section>
+
+        <section class="main__discovery discovery col-8">
+            <h2 class="discovery__title">Discovery</h2>
+
+            <!-- ############### VS1Lab 1a Form 2 Start -->
+            <form class="discovery__search" id="discoveryFilterForm" action="/discovery" method="post">
+
+                <!-- ... your code here ... -->
+                <fieldset> 
+                <legend>Search</legend> 
+                    <label> Search term or keyword: 
+                        <input type="text" id="Search_Key" placeholder="Winkelgasse">
+                    </label>
+
+                        <input type="hidden" id="Search_Latitude" placeholder="49.01379" readonly="true">
+                    
+                        <input type="hidden" id="Search_Longitude" placeholder="8.390071" readonly="true">
+                    
+
+                    <input id="Submit_Search" type="submit" value="Search">
+                </fieldset>
+            </form>
+            <!-- ############### VS1Lab 1a Form 2 End -->
+
+            <div class="discovery__wrapper row">
+                <div class="discovery__taglist col-4 ">
+                    <ul class="discovery__results" id="discoveryResults">
+                        <li>Castle (49.01379, 8.404435) #sight</li>
+                        <li>IWI (49.01379, 8.390071) #edu</li>
+                    </ul>
+                </div>
+
+                <div class="discovery__map col-8 ">
+                    <img src="./images/mapview.jpg" alt="a map with locations" id="mapView" />
+                    <span>Result map</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <span>(c) 2021/22 HKA_IWI_VSYS</span>
+    </footer>
+</body>
+
+</html>
