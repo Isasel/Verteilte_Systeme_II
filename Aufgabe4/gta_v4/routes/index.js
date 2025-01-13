@@ -18,8 +18,9 @@ const geoTagExamples = new GeoTagExamples(geoTagStore);
 /////
 // liefert die einzelne Ressource als JSON zurück,
 router.get("/api/geotags", (req, res) => {
-  const { latitude, longitude, searchterm } = req.query;
+  const { latitude, longitude, searchterm , page} = req.query;
   const radius = 0.005;
+  const limit = 8;
   let results;
 
 
@@ -38,8 +39,16 @@ router.get("/api/geotags", (req, res) => {
       radius
     );
   }
+  const startIndex = (page-1)* limit;
+  let endIndex = page * limit;
+  
+  const maxPage = Math.ceil(results.length / limit);
+
+  results = results.slice(startIndex, endIndex);
+
   let jsonResult = {
-    geotags: results,};
+    geotags: results,
+    maxPage: maxPage,};
   res.status(200).json(jsonResult);
 });
 //Überprüft
