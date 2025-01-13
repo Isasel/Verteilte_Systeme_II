@@ -32,7 +32,7 @@ router.get("/api/geotags", (req, res) => {
     );
 
   } else {
-    results = geoTagStore.getNearbyGeoTags(
+      results = geoTagStore.getNearbyGeoTags(
       parseFloat(latitude),
       parseFloat(longitude),
       radius

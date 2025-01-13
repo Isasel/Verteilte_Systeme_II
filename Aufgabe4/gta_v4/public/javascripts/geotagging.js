@@ -103,6 +103,8 @@ const tag = document.getElementById("Add_Hashtag").value;
     .catch((error) => console.error("Fehler:", error));
 }
 
+
+
 // Verarbeitung des Discovery-Formulars
 async function handleDiscovery(event) {
   event.preventDefault(); // Standardverhalten verhindern
@@ -117,40 +119,27 @@ async function handleDiscovery(event) {
       searchterm: searchterm,
   });
 
-  try {
-      const response = await fetch(`/api/geotags`, {
-          method: "GET",
-      });
-
-      if (response.ok) {
-          const results = await response.json();
-          if (response.ok) {
-            const jsonResponse = await response.json();
-            const results = jsonResponse.geotags; // Extrahiere GeoTags aus der Antwort
-            console.log(results);
-            updateDisplay(results); // Aktualisiere die Anzeige mit den Suchergebnissen
-          }
-      } else {
-          console.error("Fehler bei der Suche:", response.statusText);
-      }
-  } catch (error) {
-      console.error("Fehler beim Server-Aufruf:", error);
-  }
-}
-
-// Aktualisiere die Ergebnisanzeige und Karte
-function updateDisplay(results = []) {
-  const resultList = document.getElementById("results-list");
-
-  // Aktualisiere die Ergebnisliste
-  resultList.innerHTML = results
-      .map((result) => `<li>${result.name} (${result.latitude}, ${result.longitude})</li>`)
-      .join("");
-
-  // Aktualisiere die Marker auf der Karte
-  mapManager.updateMarkers(
-      results[0]?.latitude || 0,
-      results[0]?.longitude || 0,
-      results
-  );
-}
+  
+    const response = await fetch(`/api/geotags?${params.toString()}`, {
+      method: "GET",
+    }).then((response) => response.json()).then((data) =>{
+        console.log("Erfolg:", data);
+  
+        console.log(data);
+        const tagList = data.geotags;
+  
+        const resultsListElement = document.getElementById("discoveryResults");
+        resultsListElement.innerHTML = "";
+  
+        for (const tag of tagList) {
+          tag.location = { latitude: tag.latitude, longitude: tag.longitude };
+  
+          const childElement = document.createElement("li");
+          childElement.innerHTML = `${tag.name} (${tag.latitude}, ${tag.longitude}) ${tag.tag}`;
+  
+          resultsListElement.appendChild(childElement);
+        }
+  
+        mapManager.updateMarkers(latitude, longitude, tagList);
+      })
+    }

@@ -58,3 +58,19 @@
         }
     }
 }
+
+function updateDisplay(results = []) {
+  const resultList = document.getElementById("discoveryResults");
+
+  // Update the results list
+  resultList.innerHTML = results
+      .map((result) => `<li>${result.name} (${result.latitude}, ${result.longitude}) ${result.tag}</li>`)
+      .join("");
+
+  // Update the markers on the map
+  mapManager.updateMarkers(
+      results[0]?.latitude || 0,
+      results[0]?.longitude || 0,
+      results
+  );
+}
